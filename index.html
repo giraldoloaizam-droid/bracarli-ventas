@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bracarli — Registro de Ventas</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#FAF8F4;
+  --bg-card:#FFFFFF;
+  --bg-soft:#F1ECE2;
+  --border:#E6DFD2;
+  --border-soft:#EFE9DC;
+  --text:#241F18;
+  --text-soft:#6B6256;
+  --gold:#9C6B1F;
+  --gold-bg:#F6ECD8;
+  --gold-deep:#7A5316;
+  --watch:#274B63;
+  --watch-bg:#E7EEF2;
+  --gem:#5B3A6B;
+  --gem-bg:#EFE6F1;
+  --ita-bg:#F4E3E8;
+  --ita-text:#7A2F44;
+  --nal-bg:#E6EEDD;
+  --nal-text:#3D5A23;
+  --ok-bg:#E6EEDD;
+  --ok-text:#3D5A23;
+  --danger:#9C3B2E;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  font-family:var(--font-body);
+  color:var(--text);
+  min-height:100vh;
+}
+.topbar{
+  background:var(--text);
+  color:#F4EFE5;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--font-display);
+  font-size:20px;
+  letter-spacing:0.02em;
+}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block}
+.sync-status{
+  font-size:12px;
+  color:#C9BFA9;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.sync-status.ok{color:#A9C98F}
+.sync-status.error{color:#D99A8C}
+.admin-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.container{
+  max-width:980px;
+  margin:0 auto;
+  padding:20px 16px 60px;
+}
+.admin-bar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  background:var(--bg-soft);
+  border-radius:var(--radius-md);
+  margin-bottom:18px;
+  flex-wrap:wrap;
+  font-size:13px;
+}
+.admin-bar label{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text)}
+.admin-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--gold-bg);color:var(--gold-deep)}
+.tabs{
+  display:flex;
+  gap:2px;
+  margin-bottom:20px;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.tab{
+  padding:10px 16px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-soft);
+  cursor:pointer;
+  border:none;
+  background:none;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  white-space:nowrap;
+  font-family:var(--font-body);
+  transition:color .15s, border-color .15s;
+}
+.tab.active{color:var(--text);border-bottom-color:var(--gold)}
+.tab:hover:not(.active){color:var(--text)}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-lg);
+  padding:18px 20px;
+  margin-bottom:16px;
+}
+.sec-title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-soft);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:14px;
+}
+.form-row{display:grid;gap:12px;margin-bottom:12px}
+.r2{grid-template-columns:1fr 1fr}
+.r3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:640px){.r2,.r3{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;color:var(--text-soft);font-weight:600}
+input,select{
+  font-size:14px;
+  padding:9px 11px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:#fff;
+  color:var(--text);
+  font-family:var(--font-body);
+}
+input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+.btn-p{
+  background:var(--text);
+  color:#F4EFE5;
+  border:none;
+  border-radius:var(--radius-md);
+  padding:11px 22px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:opacity .15s;
+  font-family:var(--font-body);
+}
+.btn-p:hover{opacity:.85}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{
+  background:none;
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:8px 15px;
+  font-size:13px;
+  color:var(--text);
+  cursor:pointer;
+  font-family:var(--font-body);
+}
+.btn-s:hover{background:var(--bg-soft)}
+.btn-excel{
+  background:var(--nal-bg);
+  color:var(--nal-text);
+  border:1px solid #B9CC9F;
+  border-radius:var(--radius-md);
+  padding:8px 15px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:var(--font-body);
+}
+.btn-excel:hover{filter:brightness(0.96)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.mc{background:var(--bg-soft);border-radius:var(--radius-md);padding:14px 16px}
+.mc-label{font-size:11px;color:var(--text-soft);margin-bottom:4px;font-weight:600}
+.mc-val{font-size:21px;font-weight:600;color:var(--text);font-family:var(--font-display)}
+.mc-sub{font-size:11px;color:var(--text-soft);margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 8px;color:var(--text-soft);font-weight:600;border-bottom:1px solid var(--border-soft);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+td{padding:9px 8px;color:var(--text);border-bottom:1px solid var(--border-soft);overflow:hidden;text-overflow:ellipsis}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;letter-spacing:.02em}
+.b-gold{background:var(--gold-bg);color:var(--gold-deep)}
+.b-watch{background:var(--watch-bg);color:var(--watch)}
+.b-gem{background:var(--gem-bg);color:var(--gem)}
+.b-ita{background:var(--ita-bg);color:var(--ita-text)}
+.b-nal{background:var(--nal-bg);color:var(--nal-text)}
+.bar-w{display:flex;align-items:center;gap:6px}
+.bar-bg{flex:1;height:5px;background:var(--bg-soft);border-radius:99px;overflow:hidden}
+.bar-f{height:100%;border-radius:99px;background:var(--gold)}
+.avatar{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.empty{text-align:center;padding:30px 10px;color:var(--text-soft);font-size:13px}
+.alert{font-size:13px;color:var(--nal-text);background:var(--nal-bg);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:14px;display:none;align-items:center;gap:8px}
+.alert.show{display:flex}
+.alert.error{color:var(--danger);background:#F6E6E2}
+.btn-rep{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--text-soft)}
+.btn-rep.done{background:var(--ok-bg);color:var(--ok-text);border-color:#B9CC9F}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:10px}
+.vb-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.vb{width:100%;border-radius:4px 4px 0 0;min-height:3px;transition:height .4s}
+.vb-lbl{font-size:9px;color:var(--text-soft);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.vb-cnt{font-size:10px;font-weight:700;color:var(--text)}
+.filter-bar{display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap}
+.filter-bar .fg{min-width:120px}
+.table-scroll{overflow-x:auto}
+.loading-row{text-align:center;padding:30px;color:var(--text-soft);font-size:13px}
+.spin{display:inline-block;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+::placeholder{color:#B5AC9B}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> Bracarli</div>
+  <div class="sync-status" id="sync-status"><i class="ti ti-loader spin" aria-hidden="true"></i> Conectando...</div>
+</div>
+
+<div class="container">
+
+  <div class="admin-bar">
+    <i class="ti ti-lock" style="font-size:15px;color:var(--text-soft)" aria-hidden="true"></i>
+    <span style="color:var(--text-soft)">Admin:</span>
+    <label>
+      <input type="checkbox" id="admin-toggle" onchange="toggleAdmin()" style="width:auto"> Activar
+    </label>
+    <span id="admin-lbl" style="display:none" class="admin-badge"><i class="ti ti-shield-check" aria-hidden="true"></i> Admin activo</span>
+    <input type="password" id="admin-pass" placeholder="Contraseña" style="width:120px;display:none" onkeydown="if(event.key==='Enter')checkAdmin()">
+    <button id="admin-btn" style="display:none" class="btn-s" onclick="checkAdmin()">Entrar</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('registro')"><i class="ti ti-plus" aria-hidden="true"></i> Registrar</button>
+    <button class="tab" onclick="switchTab('productos')"><i class="ti ti-chart-bar" aria-hidden="true"></i> Productos</button>
+    <button class="tab" onclick="switchTab('vendedores')"><i class="ti ti-users" aria-hidden="true"></i> Vendedores</button>
+    <button class="tab" onclick="switchTab('clientes')"><i class="ti ti-user" aria-hidden="true"></i> Clientes</button>
+    <button class="tab" onclick="switchTab('historial')"><i class="ti ti-list" aria-hidden="true"></i> Historial</button>
+  </div>
+
+  <!-- REGISTRO -->
+  <div class="panel active" id="panel-registro">
+    <div id="alrt" class="alert"><i class="ti ti-check" aria-hidden="true"></i> <span id="alrt-text">Venta registrada.</span></div>
+    <div class="card">
+      <p class="sec-title">Datos del cliente</p>
+      <div class="form-row r3">
+        <div class="fg"><label>Cliente registrado</label>
+          <select id="cliente-sel" onchange="onClienteSel()"><option value="">— Nuevo cliente —</option></select>
+        </div>
+        <div class="fg"><label>Nombre del cliente</label>
+          <input type="text" id="cliente-nombre" placeholder="Nombre completo">
+        </div>
+        <div class="fg"><label>Teléfono (opcional)</label>
+          <input type="text" id="cliente-tel" placeholder="Ej: 3001234567">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="sec-title">Datos de la venta</p>
+      <div class="form-row r2">
+        <div class="fg"><label>Vendedor</label>
+          <select id="vendedor"><option value="">— Seleccionar —</option></select>
+        </div>
+        <div class="fg"><label>O agregar vendedor nuevo</label>
+          <input type="text" id="nuevo-v" placeholder="Nombre completo">
+        </div>
+      </div>
+      <div class="form-row r2">
+        <div class="fg"><label>Fecha</label><input type="date" id="fecha"></div>
+        <div class="fg"><label>Tipo de producto</label>
+          <select id="tipo" onchange="onTipoChange()">
+            <option value="">— Seleccionar —</option>
+            <option value="Oro 18k">Oro 18k</option>
+            <option value="Reloj Bracarli">Reloj Bracarli</option>
+            <option value="Piedra preciosa">Piedra preciosa</option>
+          </select>
+        </div>
+      </div>
+      <div id="oro-fields" style="display:none">
+        <div class="form-row r3">
+          <div class="fg"><label>Categoría</label>
+            <select id="cat-oro"><option value="">— Seleccionar —</option><option>Cadena</option><option>Dije</option><option>Topo</option><option>Anillo</option><option>Pulsera</option><option>Arete</option><option>Collar</option><option>Tobillera</option><option>Otro</option></select>
+          </div>
+          <div class="fg"><label>Nombre del artículo</label><input type="text" id="nombre-oro" placeholder="Ej: Cadena esclava"></div>
+          <div class="fg"><label>Gramos</label><input type="number" id="gramos" placeholder="Ej: 5.2" step="0.01" min="0"></div>
+        </div>
+        <div class="form-row r2">
+          <div class="fg"><label>Origen</label>
+            <select id="origen"><option value="">— Seleccionar —</option><option>Nacional</option><option>Italiano</option></select>
+          </div>
+          <div class="fg"><label>Precio de venta ($)</label><input type="number" id="precio" placeholder="Ej: 850000" min="0"></div>
+        </div>
+      </div>
+      <div id="reloj-fields" style="display:none">
+        <div class="form-row r3">
+          <div class="fg"><label>Categoría</label>
+            <select id="cat-reloj"><option value="">— Seleccionar —</option><option>Hombre</option><option>Mujer</option><option>Unisex</option><option>Infantil</option></select>
+          </div>
+          <div class="fg"><label>Nombre / referencia</label><input type="text" id="nombre-reloj" placeholder="Ej: Bracarli Classic Gold"></div>
+          <div class="fg"><label>Precio de venta ($)</label><input type="number" id="precio-reloj" placeholder="Ej: 1200000" min="0"></div>
+        </div>
+      </div>
+      <div id="piedra-fields" style="display:none">
+        <div class="form-row r3">
+          <div class="fg"><label>Categoría</label>
+            <select id="cat-piedra"><option value="">— Seleccionar —</option><option>Esmeralda</option><option>Rubí</option><option>Diamante</option><option>Zafiro</option><option>Amatista</option><option>Otra</option></select>
+          </div>
+          <div class="fg"><label>Nombre del artículo</label><input type="text" id="nombre-piedra" placeholder="Ej: Anillo esmeralda oval"></div>
+          <div class="fg"><label>Gramos</label><input type="number" id="gramos-piedra" placeholder="Ej: 3.1" step="0.01" min="0"></div>
+        </div>
+        <div class="form-row r2">
+          <div class="fg"><label>Origen</label>
+            <select id="origen-piedra"><option value="">— Seleccionar —</option><option>Nacional</option><option>Italiano</option></select>
+          </div>
+          <div class="fg"><label>Precio de venta ($)</label><input type="number" id="precio-piedra" placeholder="Ej: 2500000" min="0"></div>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:10px;margin-bottom:16px">
+        <label>Notas (opcional)</label>
+        <input type="text" id="notas" placeholder="Observaciones adicionales">
+      </div>
+      <button class="btn-p" id="btn-registrar" onclick="registrar()">Registrar venta</button>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div class="panel" id="panel-productos">
+    <div class="metrics" id="met-prod"></div>
+    <div class="card">
+      <p class="sec-title">Categorías más vendidas</p>
+      <div class="chart-bars" id="chart-prod"></div>
+      <div id="tbl-prod"></div>
+    </div>
+  </div>
+
+  <!-- VENDEDORES -->
+  <div class="panel" id="panel-vendedores">
+    <div class="metrics" id="met-vend"></div>
+    <div class="card">
+      <p class="sec-title">Ranking de vendedores</p>
+      <div class="chart-bars" id="chart-vend"></div>
+      <div id="tbl-vend"></div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="panel" id="panel-clientes">
+    <div class="metrics" id="met-cli"></div>
+    <div class="card">
+      <p class="sec-title">Directorio de clientes</p>
+      <div id="tbl-cli"></div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div class="panel" id="panel-historial">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <p class="sec-title" style="margin:0">Historial de ventas</p>
+        <button class="btn-excel" onclick="exportarExcel()"><i class="ti ti-download" aria-hidden="true"></i> Exportar a Excel</button>
+      </div>
+      <div class="filter-bar">
+        <div class="fg"><label>Desde</label><input type="date" id="f-desde" onchange="renderHistorial()"></div>
+        <div class="fg"><label>Hasta</label><input type="date" id="f-hasta" onchange="renderHistorial()"></div>
+        <div class="fg"><label>Vendedor</label>
+          <select id="f-vend" onchange="renderHistorial()"><option value="">Todos</option></select>
+        </div>
+        <div class="fg"><label>Tipo</label>
+          <select id="f-tipo" onchange="renderHistorial()">
+            <option value="">Todos</option>
+            <option>Oro 18k</option><option>Reloj Bracarli</option><option>Piedra preciosa</option>
+          </select>
+        </div>
+        <div class="fg"><label>Cliente</label>
+          <select id="f-cli" onchange="renderHistorial()"><option value="">Todos</option></select>
+        </div>
+        <button class="btn-s" onclick="limpiarFiltros()">Limpiar</button>
+      </div>
+      <div id="hist-resumen" style="font-size:12px;color:var(--text-soft);margin-bottom:10px"></div>
+      <div class="table-scroll">
+        <table id="tbl-hist" style="min-width:700px">
+          <thead><tr>
+            <th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Categoría</th><th>Nombre</th>
+            <th>Gramos</th><th>Origen</th><th>Vendedor</th><th>Precio</th><th>Exhibición</th>
+          </tr></thead>
+          <tbody id="hist-body"><tr><td colspan="10" class="loading-row"><i class="ti ti-loader spin" aria-hidden="true"></i> Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ====== CONFIGURACIÓN DE SUPABASE ======
+const SUPABASE_URL = 'https://rvpmgrbybtpwejyaoazy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2cG1ncmJ5YnRwd2VqeWFvYXp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4ODA1NTksImV4cCI6MjA5NzQ1NjU1OX0.qC3tq0msVClFv8fc3ldKJ3Y9j9ifTeU6tl9kwI5ch4U';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const ADMIN_PASS = '1234';
+
+let ventas = [];
+let vendedores = [];
+let clientes = [];
+let isAdmin = false;
+
+function setStatus(state, msg){
+  const el = document.getElementById('sync-status');
+  el.className = 'sync-status ' + state;
+  const icon = state==='ok' ? 'ti-circle-check' : (state==='error' ? 'ti-alert-triangle' : 'ti-loader spin');
+  el.innerHTML = `<i class="ti ${icon}" aria-hidden="true"></i> ${msg}`;
+}
+
+async function cargarTodo(){
+  setStatus('loading','Sincronizando...');
+  try{
+    const [vRes, sRes, cRes] = await Promise.all([
+      sb.from('ventas').select('*').order('fecha',{ascending:false}),
+      sb.from('vendedores').select('*').order('nombre'),
+      sb.from('clientes').select('*').order('nombre')
+    ]);
+    if(vRes.error) throw vRes.error;
+    if(sRes.error) throw sRes.error;
+    if(cRes.error) throw cRes.error;
+    ventas = vRes.data.map(v=>({
+      id:v.id, fecha:v.fecha, tipo:v.tipo, cat:v.categoria, nombre:v.nombre_articulo,
+      gramos:v.gramos, origen:v.origen, vendedor:v.vendedor, clienteId:v.cliente_id,
+      precio:Number(v.precio), notas:v.notas, repuesto:v.repuesto
+    }));
+    vendedores = sRes.data.map(v=>v.nombre);
+    clientes = cRes.data.map(c=>({id:c.id, nombre:c.nombre, tel:c.telefono, desde:c.created_at?c.created_at.slice(0,10):''}));
+    setStatus('ok','Sincronizado');
+    refreshVend(); refreshClientes();
+    refreshActivePanel();
+  }catch(err){
+    console.error(err);
+    setStatus('error','Sin conexión a la base de datos');
+  }
+}
+
+function refreshActivePanel(){
+  const active = document.querySelector('.panel.active');
+  if(!active) return;
+  const id = active.id.replace('panel-','');
+  if(id==='productos') renderProductos();
+  if(id==='vendedores') renderVendedores();
+  if(id==='clientes') renderClientes();
+  if(id==='historial') renderHistorial();
+}
+
+function showAlert(text, isError){
+  const a = document.getElementById('alrt');
+  document.getElementById('alrt-text').textContent = text;
+  a.classList.toggle('error', !!isError);
+  a.classList.add('show');
+  setTimeout(()=>a.classList.remove('show'), 2600);
+}
+
+function toggleAdmin(){
+  const cb=document.getElementById('admin-toggle');
+  const pw=document.getElementById('admin-pass');
+  const btn=document.getElementById('admin-btn');
+  if(cb.checked){pw.style.display='';btn.style.display='';pw.focus();}
+  else{pw.style.display='none';btn.style.display='none';isAdmin=false;document.getElementById('admin-lbl').style.display='none';renderHistorial();}
+}
+function checkAdmin(){
+  if(document.getElementById('admin-pass').value===ADMIN_PASS){
+    isAdmin=true;
+    document.getElementById('admin-lbl').style.display='';
+    document.getElementById('admin-pass').style.display='none';
+    document.getElementById('admin-btn').style.display='none';
+    renderHistorial();
+  } else alert('Contraseña incorrecta');
+}
+
+function onTipoChange(){
+  ['oro-fields','reloj-fields','piedra-fields'].forEach(id=>document.getElementById(id).style.display='none');
+  const t=document.getElementById('tipo').value;
+  if(t==='Oro 18k')document.getElementById('oro-fields').style.display='';
+  else if(t==='Reloj Bracarli')document.getElementById('reloj-fields').style.display='';
+  else if(t==='Piedra preciosa')document.getElementById('piedra-fields').style.display='';
+}
+
+function onClienteSel(){
+  const id=document.getElementById('cliente-sel').value;
+  if(!id){document.getElementById('cliente-nombre').value='';document.getElementById('cliente-tel').value='';return;}
+  const cl=clientes.find(c=>String(c.id)===id);
+  if(cl){document.getElementById('cliente-nombre').value=cl.nombre;document.getElementById('cliente-tel').value=cl.tel||'';}
+}
+
+function refreshVend(){
+  const sel=document.getElementById('vendedor');const cur=sel.value;
+  sel.innerHTML='<option value="">— Seleccionar —</option>';
+  vendedores.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;if(v===cur)o.selected=true;sel.appendChild(o);});
+  const fv=document.getElementById('f-vend');
+  if(fv){const cv=fv.value;fv.innerHTML='<option value="">Todos</option>';vendedores.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;if(v===cv)o.selected=true;fv.appendChild(o);});}
+}
+
+function refreshClientes(){
+  const sel=document.getElementById('cliente-sel');const cur=sel.value;
+  sel.innerHTML='<option value="">— Nuevo cliente —</option>';
+  clientes.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre+(c.tel?' ('+c.tel+')':'');if(String(c.id)===cur)o.selected=true;sel.appendChild(o);});
+  const fc=document.getElementById('f-cli');
+  if(fc){const cc=fc.value;fc.innerHTML='<option value="">Todos</option>';clientes.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;if(String(c.id)===cc)o.selected=true;fc.appendChild(o);});}
+}
+
+async function registrar(){
+  const btn=document.getElementById('btn-registrar');
+  let vend=document.getElementById('vendedor').value;
+  const nv=document.getElementById('nuevo-v').value.trim();
+  const tipo=document.getElementById('tipo').value;
+  const fecha=document.getElementById('fecha').value||new Date().toISOString().slice(0,10);
+  const notas=document.getElementById('notas').value.trim();
+  if(!vend && !nv){alert('Selecciona o escribe un vendedor.');return;}
+  if(!tipo){alert('Selecciona el tipo de producto.');return;}
+
+  let cat='',nombre='',gramos=null,origen='',precio=0;
+  if(tipo==='Oro 18k'){
+    cat=document.getElementById('cat-oro').value;nombre=document.getElementById('nombre-oro').value.trim();
+    gramos=parseFloat(document.getElementById('gramos').value)||null;
+    origen=document.getElementById('origen').value;precio=parseFloat(document.getElementById('precio').value)||0;
+    if(!cat||!nombre||!precio){alert('Completa categoría, nombre y precio.');return;}
+  } else if(tipo==='Reloj Bracarli'){
+    cat=document.getElementById('cat-reloj').value;nombre=document.getElementById('nombre-reloj').value.trim();
+    precio=parseFloat(document.getElementById('precio-reloj').value)||0;
+    if(!cat||!nombre||!precio){alert('Completa categoría, nombre y precio.');return;}
+  } else if(tipo==='Piedra preciosa'){
+    cat=document.getElementById('cat-piedra').value;nombre=document.getElementById('nombre-piedra').value.trim();
+    gramos=parseFloat(document.getElementById('gramos-piedra').value)||null;
+    origen=document.getElementById('origen-piedra').value;precio=parseFloat(document.getElementById('precio-piedra').value)||0;
+    if(!cat||!nombre||!precio){alert('Completa categoría, nombre y precio.');return;}
+  }
+
+  btn.disabled=true; btn.textContent='Guardando...';
+
+  try{
+    // 1. Vendedor nuevo
+    if(nv){
+      vend=nv;
+      if(!vendedores.includes(vend)){
+        const {error} = await sb.from('vendedores').insert({nombre:vend});
+        if(error && error.code!=='23505') throw error; // ignora si ya existe (unique)
+        vendedores.push(vend);
+      }
+    }
+
+    // 2. Cliente nuevo o existente
+    let clienteId = document.getElementById('cliente-sel').value || null;
+    const cNombre = document.getElementById('cliente-nombre').value.trim();
+    const cTel = document.getElementById('cliente-tel').value.trim();
+    if(cNombre && !clienteId){
+      const existe = clientes.find(c=>c.nombre.toLowerCase()===cNombre.toLowerCase());
+      if(existe){ clienteId = existe.id; }
+      else{
+        const {data, error} = await sb.from('clientes').insert({nombre:cNombre, telefono:cTel||null}).select().single();
+        if(error) throw error;
+        clientes.push({id:data.id, nombre:data.nombre, tel:data.telefono, desde:data.created_at?data.created_at.slice(0,10):''});
+        clienteId = data.id;
+      }
+    }
+
+    // 3. Venta
+    const {data: ventaData, error: ventaErr} = await sb.from('ventas').insert({
+      fecha, tipo, categoria:cat, nombre_articulo:nombre, gramos, origen:origen||null,
+      vendedor:vend, cliente_id:clienteId, precio, notas:notas||null, repuesto:false
+    }).select().single();
+    if(ventaErr) throw ventaErr;
+
+    ventas.unshift({
+      id:ventaData.id, fecha, tipo, cat, nombre, gramos, origen, vendedor:vend,
+      clienteId, precio, notas, repuesto:false
+    });
+
+    refreshVend(); refreshClientes();
+    document.getElementById('nuevo-v').value='';document.getElementById('cliente-nombre').value='';
+    document.getElementById('cliente-tel').value='';document.getElementById('cliente-sel').value='';
+    ['nombre-oro','gramos','nombre-reloj','precio-reloj','nombre-piedra','gramos-piedra','precio','precio-piedra','notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('tipo').value='';document.getElementById('origen').value='';document.getElementById('origen-piedra').value='';
+    ['oro-fields','reloj-fields','piedra-fields'].forEach(id=>document.getElementById(id).style.display='none');
+    showAlert('Venta registrada correctamente.', false);
+  }catch(err){
+    console.error(err);
+    showAlert('No se pudo guardar la venta. Revisa tu conexión e intenta de nuevo.', true);
+  }finally{
+    btn.disabled=false; btn.textContent='Registrar venta';
+  }
+}
+
+function fmt(n){return '$'+Math.round(n).toLocaleString('es-CO')}
+
+function tipoBadge(t){
+  if(t==='Oro 18k')return`<span class="badge b-gold">${t}</span>`;
+  if(t==='Reloj Bracarli')return`<span class="badge b-watch">${t}</span>`;
+  return`<span class="badge b-gem">${t}</span>`;
+}
+
+function getClienteNombre(id){if(!id)return'—';const c=clientes.find(c=>String(c.id)===String(id));return c?c.nombre:'—';}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const tabs=['registro','productos','vendedores','clientes','historial'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='productos')renderProductos();
+  if(name==='vendedores')renderVendedores();
+  if(name==='clientes')renderClientes();
+  if(name==='historial')renderHistorial();
+}
+
+function filteredVentas(){
+  const desde=document.getElementById('f-desde')?.value||'';
+  const hasta=document.getElementById('f-hasta')?.value||'';
+  const vend=document.getElementById('f-vend')?.value||'';
+  const tipo=document.getElementById('f-tipo')?.value||'';
+  const cli=document.getElementById('f-cli')?.value||'';
+  return ventas.filter(v=>{
+    if(desde&&v.fecha<desde)return false;
+    if(hasta&&v.fecha>hasta)return false;
+    if(vend&&v.vendedor!==vend)return false;
+    if(tipo&&v.tipo!==tipo)return false;
+    if(cli&&String(v.clienteId)!==cli)return false;
+    return true;
+  });
+}
+
+function limpiarFiltros(){
+  ['f-desde','f-hasta','f-vend','f-tipo','f-cli'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderHistorial();
+}
+
+function renderProductos(){
+  const map={};
+  ventas.forEach(v=>{const k=v.cat+'|'+v.tipo;if(!map[k])map[k]={cat:v.cat,tipo:v.tipo,count:0,total:0};map[k].count++;map[k].total+=v.precio;});
+  const items=Object.values(map).sort((a,b)=>b.count-a.count);
+  const total=ventas.reduce((s,v)=>s+v.precio,0);
+  document.getElementById('met-prod').innerHTML=`
+    <div class="mc"><div class="mc-label">Total ventas</div><div class="mc-val">${ventas.length}</div></div>
+    <div class="mc"><div class="mc-label">Ingresos totales</div><div class="mc-val" style="font-size:15px">${fmt(total)}</div></div>
+    <div class="mc"><div class="mc-label">Categorías</div><div class="mc-val">${items.length}</div></div>
+  `;
+  if(!items.length){document.getElementById('chart-prod').innerHTML='';document.getElementById('tbl-prod').innerHTML='<div class="empty">Sin ventas registradas todavía.</div>';return;}
+  const top=items.slice(0,7);const maxC=Math.max(...top.map(i=>i.count),1);
+  const bclr=['#9C6B1F','#274B63','#5B3A6B','#3D5A23','#7A2F44','#9C3B2E','#6B6256'];
+  document.getElementById('chart-prod').innerHTML=top.map((i,idx)=>`<div class="vb-wrap"><div class="vb" style="height:${Math.max(4,(i.count/maxC)*84)}px;background:${bclr[idx%7]}"></div><div class="vb-lbl">${i.cat}</div><div class="vb-cnt">${i.count}</div></div>`).join('');
+  document.getElementById('tbl-prod').innerHTML=`<table><thead><tr><th style="width:24px">#</th><th>Categoría</th><th>Tipo</th><th>Ventas</th><th>Ingresos</th><th>% total</th></tr></thead><tbody>${items.map((it,idx)=>`<tr><td style="color:var(--text-soft)">${idx+1}</td><td style="font-weight:600">${it.cat}</td><td>${tipoBadge(it.tipo)}</td><td>${it.count}</td><td>${fmt(it.total)}</td><td><div class="bar-w"><div class="bar-bg"><div class="bar-f" style="width:${Math.round(it.total/total*100)}%"></div></div><span style="font-size:11px;min-width:30px">${Math.round(it.total/total*100)}%</span></div></td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderVendedores(){
+  const map={};
+  ventas.forEach(v=>{if(!map[v.vendedor])map[v.vendedor]={nombre:v.vendedor,count:0,total:0};map[v.vendedor].count++;map[v.vendedor].total+=v.precio;});
+  const items=Object.values(map).sort((a,b)=>b.total-a.total);
+  const total=ventas.reduce((s,v)=>s+v.precio,0);
+  document.getElementById('met-vend').innerHTML=`
+    <div class="mc"><div class="mc-label">Vendedores</div><div class="mc-val">${items.length}</div></div>
+    <div class="mc"><div class="mc-label">Mayor vendedor</div><div class="mc-val" style="font-size:14px">${items[0]?.nombre||'—'}</div>${items[0]?`<div class="mc-sub">${fmt(items[0].total)}</div>`:''}</div>
+    <div class="mc"><div class="mc-label">Menor rendimiento</div><div class="mc-val" style="font-size:14px">${items.length>1?items[items.length-1].nombre:'—'}</div>${items.length>1?`<div class="mc-sub">${fmt(items[items.length-1].total)}</div>`:''}</div>
+  `;
+  if(!items.length){document.getElementById('chart-vend').innerHTML='';document.getElementById('tbl-vend').innerHTML='<div class="empty">Sin ventas registradas todavía.</div>';return;}
+  const clrs=['#274B63','#3D5A23','#9C6B1F','#7A2F44','#5B3A6B'];
+  const bgc=['#E7EEF2','#E6EEDD','#F6ECD8','#F4E3E8','#EFE6F1'];
+  const tc=['#274B63','#3D5A23','#9C6B1F','#7A2F44','#5B3A6B'];
+  const maxT=Math.max(...items.map(i=>i.total),1);
+  document.getElementById('chart-vend').innerHTML=items.slice(0,6).map((it,idx)=>`<div class="vb-wrap"><div class="vb" style="height:${Math.max(4,(it.total/maxT)*84)}px;background:${clrs[idx%5]}"></div><div class="vb-lbl">${it.nombre.split(' ')[0]}</div><div class="vb-cnt">${it.count}v</div></div>`).join('');
+  document.getElementById('tbl-vend').innerHTML=`<table><thead><tr><th style="width:24px">#</th><th>Vendedor</th><th>Ventas</th><th>Ingresos</th><th>% total</th></tr></thead><tbody>${items.map((it,idx)=>{const ci=idx%5;const ini=it.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return`<tr><td style="color:var(--text-soft)">${idx+1}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="background:${bgc[ci]};color:${tc[ci]}">${ini}</div><span style="font-weight:600">${it.nombre}</span></div></td><td>${it.count}</td><td>${fmt(it.total)}</td><td><div class="bar-w"><div class="bar-bg"><div class="bar-f" style="width:${Math.round(it.total/total*100)}%;background:${clrs[ci]}"></div></div><span style="font-size:11px;min-width:30px">${Math.round(it.total/total*100)}%</span></div></td></tr>`;}).join('')}</tbody></table>`;
+}
+
+function renderClientes(){
+  const map={};
+  ventas.forEach(v=>{
+    if(!v.clienteId)return;
+    const k=String(v.clienteId);
+    if(!map[k])map[k]={count:0,total:0};
+    map[k].count++;map[k].total+=v.precio;
+  });
+  const items=clientes.map(c=>({...c,...(map[String(c.id)]||{count:0,total:0})})).sort((a,b)=>b.total-a.total);
+  const bgc=['#E7EEF2','#E6EEDD','#F6ECD8','#F4E3E8','#EFE6F1'];
+  const tc=['#274B63','#3D5A23','#9C6B1F','#7A2F44','#5B3A6B'];
+  const totalCli = Object.values(map).reduce((s,m)=>s+m.total,0);
+  document.getElementById('met-cli').innerHTML=`
+    <div class="mc"><div class="mc-label">Clientes registrados</div><div class="mc-val">${clientes.length}</div></div>
+    <div class="mc"><div class="mc-label">Cliente frecuente</div><div class="mc-val" style="font-size:14px">${items[0]?.nombre||'—'}</div>${items[0]?.count?`<div class="mc-sub">${items[0].count} compra${items[0].count!==1?'s':''}</div>`:''}</div>
+    <div class="mc"><div class="mc-label">Ingreso por clientes</div><div class="mc-val" style="font-size:15px">${fmt(totalCli)}</div></div>
+  `;
+  if(!items.length){document.getElementById('tbl-cli').innerHTML='<div class="empty">Sin clientes registrados todavía.</div>';return;}
+  document.getElementById('tbl-cli').innerHTML=`<table><thead><tr><th style="width:30px">#</th><th>Nombre</th><th>Teléfono</th><th>Compras</th><th>Total gastado</th><th>Desde</th></tr></thead><tbody>${items.map((c,idx)=>{const ci=idx%5;const ini=c.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return`<tr><td style="color:var(--text-soft)">${idx+1}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="background:${bgc[ci]};color:${tc[ci]}">${ini}</div><span style="font-weight:600">${c.nombre}</span></div></td><td>${c.tel||'—'}</td><td>${c.count}</td><td>${c.total?fmt(c.total):'—'}</td><td>${c.desde||'—'}</td></tr>`;}).join('')}</tbody></table>`;
+}
+
+async function marcarRepuesto(id){
+  if(!isAdmin){alert('Activa el modo administrador primero.');return;}
+  const v=ventas.find(v=>String(v.id)===String(id));
+  if(!v)return;
+  const nuevoEstado = !v.repuesto;
+  try{
+    const {error} = await sb.from('ventas').update({repuesto:nuevoEstado}).eq('id', id);
+    if(error) throw error;
+    v.repuesto = nuevoEstado;
+    renderHistorial();
+  }catch(err){
+    console.error(err);
+    alert('No se pudo actualizar. Revisa tu conexión.');
+  }
+}
+
+function renderHistorial(){
+  const fv=filteredVentas();
+  const totalFilt=fv.reduce((s,v)=>s+v.precio,0);
+  document.getElementById('hist-resumen').textContent=`Mostrando ${fv.length} venta${fv.length!==1?'s':''} · Total: ${fmt(totalFilt)}`;
+  if(!fv.length){document.getElementById('hist-body').innerHTML='<tr><td colspan="10" class="empty">Sin resultados.</td></tr>';return;}
+  document.getElementById('hist-body').innerHTML=fv.map(v=>`<tr>
+    <td>${v.fecha}</td>
+    <td title="${getClienteNombre(v.clienteId)}">${getClienteNombre(v.clienteId)}</td>
+    <td>${tipoBadge(v.tipo)}</td>
+    <td>${v.cat}</td>
+    <td title="${v.nombre}">${v.nombre}</td>
+    <td>${v.gramos!=null?v.gramos+'g':'—'}</td>
+    <td>${v.origen?`<span class="badge ${v.origen==='Italiano'?'b-ita':'b-nal'}">${v.origen}</span>`:'—'}</td>
+    <td>${v.vendedor}</td>
+    <td>${fmt(v.precio)}</td>
+    <td>${isAdmin
+      ?`<button class="btn-rep${v.repuesto?' done':''}" onclick="marcarRepuesto('${v.id}')">${v.repuesto?'<i class=\"ti ti-check\" aria-hidden=\"true\"></i> Repuesto':'Marcar'}</button>`
+      :`<span style="font-size:11px;color:${v.repuesto?'var(--ok-text)':'var(--text-soft)'}">${v.repuesto?'Repuesto':'Pendiente'}</span>`
+    }</td>
+  </tr>`).join('');
+}
+
+function exportarExcel(){
+  const fv=filteredVentas().slice().sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  if(!fv.length){alert('No hay ventas para exportar con los filtros actuales.');return;}
+  const rows=fv.map(v=>({
+    'Fecha':v.fecha,
+    'Cliente':getClienteNombre(v.clienteId),
+    'Teléfono':clientes.find(c=>String(c.id)===String(v.clienteId))?.tel||'',
+    'Tipo':v.tipo,
+    'Categoría':v.cat,
+    'Nombre artículo':v.nombre,
+    'Gramos':v.gramos!=null?v.gramos:'',
+    'Origen':v.origen||'',
+    'Vendedor':v.vendedor,
+    'Precio':v.precio,
+    'Notas':v.notas||'',
+    'Repuesto en exhibición':v.repuesto?'Sí':'No'
+  }));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Ventas');
+  const hoy=new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb,`Bracarli_ventas_${hoy}.xlsx`);
+}
+
+// Realtime: si otro vendedor registra una venta, se actualiza solo
+sb.channel('ventas-realtime')
+  .on('postgres_changes', {event:'*', schema:'public', table:'ventas'}, ()=>{ cargarTodo(); })
+  .on('postgres_changes', {event:'*', schema:'public', table:'clientes'}, ()=>{ cargarTodo(); })
+  .on('postgres_changes', {event:'*', schema:'public', table:'vendedores'}, ()=>{ cargarTodo(); })
+  .subscribe();
+
+document.getElementById('fecha').value=new Date().toISOString().slice(0,10);
+cargarTodo();
+</script>
+</body>
+</html>
